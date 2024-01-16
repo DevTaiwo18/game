@@ -1,0 +1,610 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        *{
+            margin: 0%;
+            padding: 0%;
+            box-sizing: border-box;
+        }
+        body{
+            background-color: black;
+            font-family: sans-serif;
+            overflow: hidden;
+        }
+        button{
+            background-color: red;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            font-size: 18px;
+            font-weight: 700;
+            margin-top: 1rem;
+        }
+        ul li{
+            font-size: 20px;
+            font-weight: 700;
+            color: #fff;
+        }
+        ul{
+            line-height: 2.5;
+            text-align: justify;
+        }
+        #first{
+            margin: 8rem 12rem;
+            line-height: 2;
+            text-align: center;
+        }
+        h2{
+            font-size: 25px;
+            font-weight: 700;
+            color: #fff;
+        }
+        .falling-card {
+            animation: fall 10s linear forwards;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-100%);
+            }
+            100% {
+                transform: translateY(100vh);
+            }
+        }
+        #lives {
+            position: absolute;
+            top: 20px !important;
+            left: 20px !important;
+            color:black ;
+            font-size: 20px;
+            font-weight: 700;
+        }
+        .red{
+            position: absolute;
+            background-color: white;
+            left: 0%;
+            height: 100%;
+            width: 10%;
+            display: none;
+        }
+        #level{
+            position: absolute;
+            bottom: 20px !important;
+            left: 20px !important;
+            color: black;
+            font-size: 20px;
+            font-weight: 700;
+        }
+        #score{
+            position: absolute;
+            margin-top: 270px !important;
+            left: 18px !important;
+            color: black;
+            font-size: 18px;
+            font-weight: 700;
+        }
+        #bottom {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 90%;
+            height: 30px; 
+            background-color: red; 
+            display: none;
+            animation: danger 0.5s infinite alternate;
+        }
+
+        @keyframes danger {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+        h1{
+            color: red;
+            font-size: 50px;
+            font-weight: 700;
+            position: absolute;
+            left: 45%;
+            top: 40%;
+            animation: moveupdown 8s infinite ease-in-out;
+        }
+        @keyframes moveupdown {
+            0%{
+                transform: translateY(0);
+            }
+            50%{
+                transform: translateY(-50%);
+            }
+            100%{
+                transform: translateY(0);
+            }
+        }
+        #btn{
+            position: absolute;
+            left: 48%;
+            top: 50%;
+            animation: moveupdown 8s infinite ease-in-out;
+            background-color: red;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            font-size: 18px;
+            font-weight: 700;
+            display: none;
+        }
+        #show{
+            display: none;
+        }
+        .star-falling{
+            animation: starFall 5s linear forwards;
+        }
+        @keyframes starFall {
+            0% {
+                transform: translateY(-100%);
+            }
+            100% {
+                transform: translateY(100vh);
+            }
+        }
+        @media (max-width:1200px) {
+            button{
+                padding: 1rem 2rem;
+                font-size: 18px;
+                margin-top: 1rem;
+            }
+            ul li{
+                font-size: 16px;
+            }
+            #first{
+                margin: 8rem 8rem;
+            }
+            h2{
+                font-size: 20px;
+            }
+            #lives {
+                top: 20px !important;
+                left: 18px !important;
+                font-size: 16px;
+            }
+            .red{
+                position: absolute;
+                background-color: white;
+                left: 0%;
+                height: 100%;
+                width: 10%;
+                display: none;
+            }
+            #level{
+                bottom: 20px !important;
+                left: 18px !important;
+                font-size: 16px;
+            }
+            #score{
+                margin-top: 270px !important;
+                left: 16px !important;
+                font-size: 16px;
+            }
+        }
+        @media (max-width:1000px) {
+            #lives {
+                top: 20px !important;
+                left: 16px !important;
+                font-size: 12px;
+            }
+            .red{
+                position: absolute;
+                background-color: white;
+                left: 0%;
+                height: 100%;
+                width: 12%;
+                display: none;
+            }
+            #level{
+                bottom: 20px !important;
+                left: 16px !important;
+                font-size: 12px;
+            }
+            #score{
+                margin-top: 270px !important;
+                left: 16px !important;
+                font-size: 12px;
+            }
+            #bottom {
+                width: 88%;
+                height: 25px; 
+            }
+            h1{
+                left: 40%;
+                top: 40%;
+            }
+            #btn{
+                left: 49%;
+                top: 50%;
+            }
+        }
+        @media (max-width:768px) {
+            button{
+                padding: 1rem 2rem;
+                font-size: 18px;
+                margin-top: 1rem;
+            }
+            ul li{
+                font-size: 14px;
+            }
+            ul{
+                line-height: 3;
+            }
+            #first{
+                margin: 8rem 3rem;
+            }
+            h2{
+                font-size: 18px;
+            }
+
+        }
+        @media (max-width:500px) {
+            button{
+                padding: 1rem 2rem;
+                font-size: 18px;
+                margin-top: 1rem;
+            }
+            ul li{
+                font-size: 14px;
+            }
+            ul{
+                line-height: 3;
+            }
+            #first{
+                margin: 6rem 2rem;
+            }
+            h2{
+                font-size: 16px;
+            }
+             #lives {
+                top: 20px !important;
+                left: 3px !important;
+                font-size: 10px;
+            }
+            .red{
+                position: absolute;
+                background-color: white;
+                left: 0%;
+                height: 100%;
+                width: 12%;
+                display: none;
+                z-index: 1000;
+            }
+            #level{
+                bottom: 20px !important;
+                left: 3px !important;
+                font-size: 10px;
+            }
+            #score{
+                margin-top: 270px !important;
+                left: 3px !important;
+                font-size: 10px;
+            }
+            #bottom {
+                width: 88%;
+                height: 25px; 
+            }
+            h1{
+                left: 38%;
+                top: 40%;
+                font-size: 30px;
+            }
+            #btn{
+                left: 38% !important;
+                top: 50%;
+            }
+        }
+        @media (max-width:400px) {
+            button{
+                padding: 1rem 2rem;
+                font-size: 18px;
+                margin-top: 1rem;
+            }
+            ul li{
+                font-size: 10px;
+            }
+            ul{
+                line-height: 3;
+            }
+            #first{
+                margin: 8rem 2rem;
+            }
+            h2{
+                font-size: 14px;
+                margin-bottom: 1rem;
+            }
+              #lives {
+                top: 20px !important;
+                left: 3px !important;
+                font-size: 10px;
+            }
+            .red{
+                position: absolute;
+                background-color: white;
+                left: 0%;
+                height: 100%;
+                width: 12%;
+                display: none;
+                z-index: 1000;
+            }
+            #level{
+                bottom: 20px !important;
+                left: 3px !important;
+                font-size: 10px;
+            }
+            #score{
+                margin-top: 270px !important;
+                left: 3px !important;
+                font-size: 8px;
+            }
+            #bottom {
+                width: 88%;
+                height: 25px; 
+            }
+            h1{
+                left: 36%;
+                top: 40%;
+                font-size: 30px;
+            }
+            #btn{
+                left: 36% !important;
+                top: 50%;
+            }
+        }
+        @media (max-width:320px) {
+            .red{
+                width: 12%;
+            }
+            #level{
+                bottom: 20px !important;
+                left: 1px !important;
+                font-size: 8px;
+            }
+            #score{
+                margin-top: 270px !important;
+                left: 1px !important;
+                font-size: 8px;
+            }
+             #lives {
+                top: 20px !important;
+                left: 1px !important;
+                font-size: 8px;
+            }
+            #bottom {
+                width: 88%;
+                height: 25px; 
+            }
+            h1{
+                left: 31%;
+                top: 40%;
+                font-size: 30px;
+            }
+            #btn{
+                left: 30% !important;
+                top: 50%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="first">
+        <h2>Rules and Regulation of the Game</h2>
+        <ul>
+            <li>Click on the start button to start the Game</li>
+            <li>If a card reaches the buttom of the screen without being clicked , it trigger the Game over condition</li>
+            <li>Click on 30 card to advance to the second Level</li>
+            <li>Your live increase when you are able to click on the Star card</li>
+        </ul>
+        <button onclick="start()">Start Game</button>
+    </div>
+
+    <div class="red">
+        <div id="lives">Lives: 3</div>
+        <div id="score">Score: 00</div>
+        <div id="level">Level: 1</div>
+    </div>
+
+    <div id="bottom"></div>
+
+   <div id="show">
+    <h1 id="message"></h1>
+   </div>
+
+   
+   <button id="btn" onclick="startagain()">Start Again</button>
+
+    <audio src="./the-epic-2-by-rafael-krux(chosic.com).mp3" id="backgroundSound"></audio>
+
+    <audio src="./mixkit-arcade-game-complete-or-approved-mission-205.wav" id="cardSound"></audio>
+</body>
+    <script>
+        let backgroundSound = document.getElementById('backgroundSound');
+        let cardSound = document.getElementById('cardSound');
+        let bottom = document.getElementById('bottom')
+        let lives = 3;
+        let message = document.getElementById('message')
+        let stopgame = false;
+        let sttop;
+        let show = document.getElementById('show');
+        let score = 0;       
+        let level = document.getElementById('level')
+        let cardAnimationDuration;
+        let side = document.querySelector('.red')
+
+        let cards = document.querySelectorAll('.falling-card');
+            cards.forEach(card => {
+                card.style.animation = `fall ${cardAnimationDuration} linear forwards`;
+        });
+
+        function start() {
+            let div = document.querySelector('#first');
+            div.style.display = 'none';
+
+            bottom.style.display = 'block';
+
+            side.style.display = 'block'
+
+            sttop = setInterval(function () {
+                if (!stopgame) {
+                    let card = new Card();
+                    backgroundSound.play();
+                    card.element.addEventListener('click', function () {
+                        this.style.display = 'none';
+                        cardSound.play();
+                        score++; 
+                        document.getElementById('score').innerText = `Score: ${score.toString().padStart(2, '0')}`;
+                        checkScoreLevel();
+                    });
+                    checkLives();
+
+                    if (score < 50) {
+                        cardAnimationDuration = '10s'; 
+                    } else if (score >= 50 && score < 100) {
+                        cardAnimationDuration = '5s'; 
+                    } else if (score >= 100) {
+                        cardAnimationDuration = '2s'; 
+                    }
+                    card.element.style.animation = `fall ${cardAnimationDuration} linear forwards`;
+                }
+            }, 1300);
+        }
+
+        function checkLives() {
+            let bottomPos = bottom.getBoundingClientRect().top;
+            let cards = document.querySelectorAll('.falling-card');
+            let starCreated = false; 
+            cards.forEach(card => {
+                let cardPos = card.getBoundingClientRect().bottom;
+                if (cardPos >= bottomPos) {
+                    card.remove();
+                    cardSound.play();
+                    lives--;
+                    document.getElementById('lives').innerText = `Lives: ${lives}`;
+                    if (lives === 0) {
+                        gameOver();
+                    } else if (lives === 1 && !starCreated) {
+                        createStar();
+                        starCreated = true; 
+                    }
+                }
+            });
+        }
+
+        function gameOver() {
+            stopgame = true;
+            clearInterval(sttop); 
+            show.style.display = 'block'
+            message.innerHTML = 'Game over'
+            let remainingCards = document.querySelectorAll('.falling-card');
+            remainingCards.forEach(card => {
+                card.style.display = 'none'; 
+            });
+            btn.style.display = 'block'
+        }
+
+        class Card {
+            constructor () {
+                this.element = document.createElement('div');
+                this.element.classList.add('falling-card');
+                this.element.style.width = '50px';
+                this.element.style.height = '50px';
+                this.element.style.borderRadius = '8px';
+                this.element.style.position = 'absolute';
+                this.element.style.cursor = 'pointer';
+                this.element.style.backgroundColor = this.getrandomcolor();
+                this.element.style.right = `${Math.random() * 80}%`;
+                document.body.appendChild(this.element);  
+            }
+            
+            getrandomcolor() {
+                let colors = ['red', 'green', 'blue', 'pink', 'yellow', 'orange', 'purple'];
+                let index = Math.floor(Math.random() * colors.length);
+                return colors[index];
+            }
+
+        }
+
+        function checkScoreLevel() {
+            if (score === 50) {
+                show.style.display = 'block';
+                message.innerHTML = 'Level 2';
+                level.innerText = `Level: 2`;
+                stopgame = true;
+                clearInterval(sttop);
+                let remainingCards = document.querySelectorAll('.falling-card');
+                remainingCards.forEach(card => {
+                    card.style.display = 'none'; 
+                });
+                setTimeout(() => {
+                    show.style.display = 'none';
+                    level.innerText = `Level: 2`; 
+                    stopgame = false; 
+                    start();
+                    backgroundSound.play();
+                }, 1000);
+            }
+
+            if (score === 100) {
+                show.style.display = 'block';
+                message.innerHTML = 'Level 3';
+                level.innerText = `Level: 3`;
+                stopgame = true;
+                clearInterval(sttop);
+                let remainingCards = document.querySelectorAll('.falling-card');
+                remainingCards.forEach(card => {
+                    card.style.display = 'none'; 
+                });
+                setTimeout(() => {
+                    show.style.display = 'none';
+                    level.innerText = `Level: 3`; 
+                    stopgame = false; 
+                    start();
+                    backgroundSound.play();
+                }, 1000);
+            }
+    }
+
+        function createStar() {
+            let star = document.createElement('img');
+            star.src = "./start2.png"; 
+            star.style.position = 'absolute';
+            star.style.width = '50px'; 
+            star.style.height = '50px'; 
+            star.classList.add('star-falling');
+            star.style.right = `${Math.random() * 80}%`;
+            star.style.pointerEvents = 'auto'; 
+            document.body.appendChild(star);
+
+            star.addEventListener('click', function() {
+                lives = 3;
+                document.getElementById('lives').innerText = `Lives: ${lives}`;
+                this.remove();
+
+                 let remainingCards = document.querySelectorAll('.falling-card');
+                    remainingCards.forEach(card => {
+                        card.style.display = 'none'; 
+                    });
+
+                let starSound = new Audio("./game-bonus-144751.mp3"); 
+                starSound.play();
+            });
+
+        }
+
+        function startagain() {
+            window.location.reload()
+        }
+    </script>
+</html>
