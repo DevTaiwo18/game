@@ -2,609 +2,940 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Falling Cards Game</title>
     <style>
-        *{
-            margin: 0%;
-            padding: 0%;
+        * {
+            margin: 0;
+            padding: 0;
             box-sizing: border-box;
         }
-        body{
-            background-color: black;
-            font-family: sans-serif;
+        
+        body {
+            background-color: #0f0f1a;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             overflow: hidden;
-        }
-        button{
-            background-color: red;
-            padding: 1rem 2rem;
-            border: none;
-            border-radius: 5px;
             color: #fff;
-            font-size: 18px;
-            font-weight: 700;
-            margin-top: 1rem;
+            position: relative;
+            min-height: 100vh;
         }
-        ul li{
-            font-size: 20px;
-            font-weight: 700;
-            color: #fff;
+        
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
         }
-        ul{
-            line-height: 2.5;
-            text-align: justify;
-        }
-        #first{
-            margin: 8rem 12rem;
-            line-height: 2;
-            text-align: center;
-        }
-        h2{
-            font-size: 25px;
-            font-weight: 700;
-            color: #fff;
-        }
-        .falling-card {
-            animation: fall 10s linear forwards;
-        }
-
-        @keyframes fall {
-            0% {
-                transform: translateY(-100%);
-            }
-            100% {
-                transform: translateY(100vh);
-            }
-        }
-        #lives {
-            position: absolute;
-            top: 20px !important;
-            left: 20px !important;
-            color:black ;
-            font-size: 20px;
-            font-weight: 700;
-        }
-        .red{
-            position: absolute;
-            background-color: white;
-            left: 0%;
-            height: 100%;
-            width: 10%;
+        
+        #game-area {
+            width: 100%;
+            height: 100vh;
+            position: relative;
             display: none;
         }
-        #level{
+        
+        #intro-screen {
+            text-align: center;
+            padding: 2rem;
+            background-color: rgba(0, 0, 0, 0.7);
+            border-radius: 15px;
+            max-width: 800px;
+            margin: 0 auto;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+        }
+        
+        h1 {
+            color: #ff3e3e;
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+        }
+        
+        h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+        }
+        
+        .rules {
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+        }
+        
+        ul {
+            line-height: 1.8;
+            text-align: left;
+            padding-left: 2rem;
+        }
+        
+        ul li {
+            font-size: 1.2rem;
+            font-weight: 400;
+            margin-bottom: 0.8rem;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #ff3e3e, #aa0000);
+            color: white;
+            border: none;
+            padding: 1rem 2.5rem;
+            font-size: 1.2rem;
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(255, 0, 0, 0.4);
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 0, 0, 0.6);
+        }
+        
+        button:active {
+            transform: translateY(1px);
+        }
+        
+        .sidebar {
             position: absolute;
-            bottom: 20px !important;
-            left: 20px !important;
-            color: black;
-            font-size: 20px;
+            left: 0;
+            top: 0;
+            width: 200px;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 2rem 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 100;
+        }
+        
+        .stats {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .stat-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.7;
+            margin-bottom: 0.3rem;
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
             font-weight: 700;
         }
-        #score{
-            position: absolute;
-            margin-top: 270px !important;
-            left: 18px !important;
-            color: black;
-            font-size: 18px;
-            font-weight: 700;
+        
+        #lives-display {
+            color: #ff5e5e;
         }
-        #bottom {
+        
+        #score-display {
+            color: #5eff5e;
+        }
+        
+        #level-display {
+            color: #5e5eff;
+        }
+        
+        .hearts-container {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        
+        .heart {
+            color: #ff3e3e;
+            font-size: 1.5rem;
+        }
+        
+        .danger-zone {
             position: absolute;
             bottom: 0;
             right: 0;
-            width: 90%;
-            height: 30px; 
-            background-color: red; 
-            display: none;
-            animation: danger 0.5s infinite alternate;
+            width: calc(100% - 200px);
+            height: 40px;
+            background: linear-gradient(transparent, rgba(255, 0, 0, 0.7));
+            z-index: 50;
+            animation: pulse 1.5s infinite alternate;
         }
-
-        @keyframes danger {
+        
+        @keyframes pulse {
+            0% {
+                opacity: 0.3;
+            }
+            100% {
+                opacity: 0.7;
+            }
+        }
+        
+        .falling-card {
+            position: absolute;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+            transition: transform 0.1s;
+            z-index: 10;
+        }
+        
+        .falling-card:hover {
+            transform: scale(1.1);
+        }
+        
+        .falling-card::before {
+            content: '+1';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            color: white;
+            font-weight: bold;
+            pointer-events: none;
+        }
+        
+        .falling-card.clicked::before {
+            animation: scorePopup 0.5s forwards;
+        }
+        
+        @keyframes scorePopup {
             0% {
                 opacity: 0;
+                top: -20px;
             }
-            100% {
+            50% {
                 opacity: 1;
-            }
-        }
-        h1{
-            color: red;
-            font-size: 50px;
-            font-weight: 700;
-            position: absolute;
-            left: 45%;
-            top: 40%;
-            animation: moveupdown 8s infinite ease-in-out;
-        }
-        @keyframes moveupdown {
-            0%{
-                transform: translateY(0);
-            }
-            50%{
-                transform: translateY(-50%);
-            }
-            100%{
-                transform: translateY(0);
-            }
-        }
-        #btn{
-            position: absolute;
-            left: 48%;
-            top: 50%;
-            animation: moveupdown 8s infinite ease-in-out;
-            background-color: red;
-            padding: 1rem 2rem;
-            border: none;
-            border-radius: 5px;
-            color: #fff;
-            font-size: 18px;
-            font-weight: 700;
-            display: none;
-        }
-        #show{
-            display: none;
-        }
-        .star-falling{
-            animation: starFall 5s linear forwards;
-        }
-        @keyframes starFall {
-            0% {
-                transform: translateY(-100%);
+                top: -30px;
             }
             100% {
-                transform: translateY(100vh);
+                opacity: 0;
+                top: -40px;
             }
         }
-        @media (max-width:1200px) {
-            button{
-                padding: 1rem 2rem;
-                font-size: 18px;
-                margin-top: 1rem;
+        
+        @keyframes fall {
+            0% {
+                transform: translateY(-100px) rotate(0deg);
             }
-            ul li{
-                font-size: 16px;
-            }
-            #first{
-                margin: 8rem 8rem;
-            }
-            h2{
-                font-size: 20px;
-            }
-            #lives {
-                top: 20px !important;
-                left: 18px !important;
-                font-size: 16px;
-            }
-            .red{
-                position: absolute;
-                background-color: white;
-                left: 0%;
-                height: 100%;
-                width: 10%;
-                display: none;
-            }
-            #level{
-                bottom: 20px !important;
-                left: 18px !important;
-                font-size: 16px;
-            }
-            #score{
-                margin-top: 270px !important;
-                left: 16px !important;
-                font-size: 16px;
+            100% {
+                transform: translateY(calc(100vh + 100px)) rotate(360deg);
             }
         }
-        @media (max-width:1000px) {
-            #lives {
-                top: 20px !important;
-                left: 16px !important;
-                font-size: 12px;
+        
+        .star {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            filter: drop-shadow(0 0 10px gold);
+            z-index: 20;
+            cursor: pointer;
+        }
+        
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            display: none;
+        }
+        
+        .message-box {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            max-width: 80%;
+            border: 2px solid #ff3e3e;
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.5);
+            animation: appear 0.5s forwards;
+        }
+        
+        @keyframes appear {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
             }
-            .red{
-                position: absolute;
-                background-color: white;
-                left: 0%;
-                height: 100%;
-                width: 12%;
-                display: none;
-            }
-            #level{
-                bottom: 20px !important;
-                left: 16px !important;
-                font-size: 12px;
-            }
-            #score{
-                margin-top: 270px !important;
-                left: 16px !important;
-                font-size: 12px;
-            }
-            #bottom {
-                width: 88%;
-                height: 25px; 
-            }
-            h1{
-                left: 40%;
-                top: 40%;
-            }
-            #btn{
-                left: 49%;
-                top: 50%;
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
         }
-        @media (max-width:768px) {
-            button{
-                padding: 1rem 2rem;
-                font-size: 18px;
-                margin-top: 1rem;
-            }
-            ul li{
-                font-size: 14px;
-            }
-            ul{
-                line-height: 3;
-            }
-            #first{
-                margin: 8rem 3rem;
-            }
-            h2{
-                font-size: 18px;
-            }
-
+        
+        .message-title {
+            font-size: 3rem;
+            color: #ff3e3e;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.7);
         }
-        @media (max-width:500px) {
-            button{
-                padding: 1rem 2rem;
-                font-size: 18px;
-                margin-top: 1rem;
+        
+        .message-content {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            line-height: 1.5;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            height: 15px;
+            margin-top: 1rem;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #ff3e3e, #ff9d00);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        #pause-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            z-index: 200;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+        }
+        
+        /* Responsive styles */
+        @media (max-width: 1200px) {
+            ul li {
+                font-size: 1.1rem;
             }
-            ul li{
-                font-size: 14px;
+            
+            h1 {
+                font-size: 2.5rem;
             }
-            ul{
-                line-height: 3;
-            }
-            #first{
-                margin: 6rem 2rem;
-            }
-            h2{
-                font-size: 16px;
-            }
-             #lives {
-                top: 20px !important;
-                left: 3px !important;
-                font-size: 10px;
-            }
-            .red{
-                position: absolute;
-                background-color: white;
-                left: 0%;
-                height: 100%;
-                width: 12%;
-                display: none;
-                z-index: 1000;
-            }
-            #level{
-                bottom: 20px !important;
-                left: 3px !important;
-                font-size: 10px;
-            }
-            #score{
-                margin-top: 270px !important;
-                left: 3px !important;
-                font-size: 10px;
-            }
-            #bottom {
-                width: 88%;
-                height: 25px; 
-            }
-            h1{
-                left: 38%;
-                top: 40%;
-                font-size: 30px;
-            }
-            #btn{
-                left: 38% !important;
-                top: 50%;
+            
+            h2 {
+                font-size: 1.5rem;
             }
         }
-        @media (max-width:400px) {
-            button{
-                padding: 1rem 2rem;
-                font-size: 18px;
-                margin-top: 1rem;
+        
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 150px;
             }
-            ul li{
-                font-size: 10px;
+            
+            .danger-zone {
+                width: calc(100% - 150px);
             }
-            ul{
-                line-height: 3;
-            }
-            #first{
-                margin: 8rem 2rem;
-            }
-            h2{
-                font-size: 14px;
-                margin-bottom: 1rem;
-            }
-              #lives {
-                top: 20px !important;
-                left: 3px !important;
-                font-size: 10px;
-            }
-            .red{
-                position: absolute;
-                background-color: white;
-                left: 0%;
-                height: 100%;
-                width: 12%;
-                display: none;
-                z-index: 1000;
-            }
-            #level{
-                bottom: 20px !important;
-                left: 3px !important;
-                font-size: 10px;
-            }
-            #score{
-                margin-top: 270px !important;
-                left: 3px !important;
-                font-size: 8px;
-            }
-            #bottom {
-                width: 88%;
-                height: 25px; 
-            }
-            h1{
-                left: 36%;
-                top: 40%;
-                font-size: 30px;
-            }
-            #btn{
-                left: 36% !important;
-                top: 50%;
+            
+            .stat-value {
+                font-size: 1.3rem;
             }
         }
-        @media (max-width:320px) {
-            .red{
-                width: 12%;
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 120px;
             }
-            #level{
-                bottom: 20px !important;
-                left: 1px !important;
-                font-size: 8px;
+            
+            .danger-zone {
+                width: calc(100% - 120px);
             }
-            #score{
-                margin-top: 270px !important;
-                left: 1px !important;
-                font-size: 8px;
+            
+            .stat-item {
+                padding: 0.8rem;
             }
-             #lives {
-                top: 20px !important;
-                left: 1px !important;
-                font-size: 8px;
+            
+            .stat-value {
+                font-size: 1.1rem;
             }
-            #bottom {
-                width: 88%;
-                height: 25px; 
+            
+            ul li {
+                font-size: 1rem;
             }
-            h1{
-                left: 31%;
-                top: 40%;
-                font-size: 30px;
+            
+            h1 {
+                font-size: 2rem;
             }
-            #btn{
-                left: 30% !important;
-                top: 50%;
+            
+            h2 {
+                font-size: 1.3rem;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .sidebar {
+                width: 80px;
+                padding: 1rem 0.5rem;
+            }
+            
+            .danger-zone {
+                width: calc(100% - 80px);
+            }
+            
+            .stat-label {
+                font-size: 0.7rem;
+            }
+            
+            .stat-value {
+                font-size: 0.9rem;
+            }
+            
+            .hearts-container {
+                gap: 0.2rem;
+            }
+            
+            .heart {
+                font-size: 1rem;
+            }
+            
+            button {
+                padding: 0.8rem 1.5rem;
+                font-size: 1rem;
+            }
+            
+            .message-title {
+                font-size: 2rem;
+            }
+            
+            .message-content {
+                font-size: 1rem;
             }
         }
     </style>
 </head>
 <body>
-    <div id="first">
-        <h2>Rules and Regulation of the Game</h2>
-        <ul>
-            <li>Click on the start button to start the Game</li>
-            <li>If a card reaches the buttom of the screen without being clicked , it trigger the Game over condition</li>
-            <li>Click on 30 card to advance to the second Level</li>
-            <li>Your live increase when you are able to click on the Star card</li>
-        </ul>
-        <button onclick="start()">Start Game</button>
+    <div class="container">
+        <div id="intro-screen">
+            <h1>Card Catcher</h1>
+            <div class="rules">
+                <h2>Rules and Regulations</h2>
+                <ul>
+                    <li>Click on falling cards to earn points</li>
+                    <li>If a card reaches the bottom without being clicked, you lose a life</li>
+                    <li>Reach 30 points to advance to level 2</li>
+                    <li>Reach 70 points to advance to level 3</li>
+                    <li>Cards fall faster with each level</li>
+                    <li>Look out for golden stars to gain an extra life</li>
+                </ul>
+            </div>
+            <button id="start-btn">Start Game</button>
+        </div>
+        
+        <div id="game-area">
+            <div class="sidebar">
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="stat-label">LIVES</div>
+                        <div id="lives-display" class="stat-value">3</div>
+                        <div class="hearts-container">
+                            <span class="heart">❤️</span>
+                            <span class="heart">❤️</span>
+                            <span class="heart">❤️</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-item">
+                        <div class="stat-label">SCORE</div>
+                        <div id="score-display" class="stat-value">0</div>
+                        <div class="progress-container">
+                            <div class="progress-bar" id="level-progress"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-item">
+                        <div class="stat-label">LEVEL</div>
+                        <div id="level-display" class="stat-value">1</div>
+                    </div>
+                </div>
+            </div>
+            
+            <button id="pause-btn">⏸️</button>
+            <div class="danger-zone"></div>
+        </div>
     </div>
-
-    <div class="red">
-        <div id="lives">Lives: 3</div>
-        <div id="score">Score: 00</div>
-        <div id="level">Level: 1</div>
+    
+    <div class="overlay" id="message-overlay">
+        <div class="message-box">
+            <h2 class="message-title" id="message-title">Level Complete!</h2>
+            <p class="message-content" id="message-content">Get ready for the next level!</p>
+            <button id="continue-btn">Continue</button>
+        </div>
     </div>
-
-    <div id="bottom"></div>
-
-   <div id="show">
-    <h1 id="message"></h1>
-   </div>
-
-   
-   <button id="btn" onclick="startagain()">Start Again</button>
-
-    <audio src="./the-epic-2-by-rafael-krux(chosic.com).mp3" id="backgroundSound"></audio>
-
-    <audio src="./mixkit-arcade-game-complete-or-approved-mission-205.wav" id="cardSound"></audio>
-</body>
+    
+    <!-- Audio elements -->
+    <audio id="background-music" loop>
+        <source src="https://assets.mixkit.co/music/preview/mixkit-game-level-music-689.mp3" type="audio/mpeg">
+    </audio>
+    
+    <audio id="card-click">
+        <source src="https://assets.mixkit.co/active_storage/sfx/2022/2022-preview.mp3" type="audio/mpeg">
+    </audio>
+    
+    <audio id="level-up">
+        <source src="https://assets.mixkit.co/active_storage/sfx/2031/2031-preview.mp3" type="audio/mpeg">
+    </audio>
+    
+    <audio id="star-sound">
+        <source src="https://assets.mixkit.co/active_storage/sfx/1899/1899-preview.mp3" type="audio/mpeg">
+    </audio>
+    
+    <audio id="game-over">
+        <source src="https://assets.mixkit.co/active_storage/sfx/2020/2020-preview.mp3" type="audio/mpeg">
+    </audio>
+    
     <script>
-        let backgroundSound = document.getElementById('backgroundSound');
-        let cardSound = document.getElementById('cardSound');
-        let bottom = document.getElementById('bottom')
-        let lives = 3;
-        let message = document.getElementById('message')
-        let stopgame = false;
-        let sttop;
-        let show = document.getElementById('show');
-        let score = 0;       
-        let level = document.getElementById('level')
-        let cardAnimationDuration;
-        let side = document.querySelector('.red')
-
-        let cards = document.querySelectorAll('.falling-card');
-            cards.forEach(card => {
-                card.style.animation = `fall ${cardAnimationDuration} linear forwards`;
-        });
-
-        function start() {
-            let div = document.querySelector('#first');
-            div.style.display = 'none';
-
-            bottom.style.display = 'block';
-
-            side.style.display = 'block'
-
-            sttop = setInterval(function () {
-                if (!stopgame) {
-                    let card = new Card();
-                    backgroundSound.play();
-                    card.element.addEventListener('click', function () {
-                        this.style.display = 'none';
-                        cardSound.play();
-                        score++; 
-                        document.getElementById('score').innerText = `Score: ${score.toString().padStart(2, '0')}`;
-                        checkScoreLevel();
-                    });
-                    checkLives();
-
-                    if (score < 50) {
-                        cardAnimationDuration = '10s'; 
-                    } else if (score >= 50 && score < 100) {
-                        cardAnimationDuration = '5s'; 
-                    } else if (score >= 100) {
-                        cardAnimationDuration = '2s'; 
-                    }
-                    card.element.style.animation = `fall ${cardAnimationDuration} linear forwards`;
-                }
-            }, 1300);
+        // Game configuration
+        const config = {
+            initialLives: 3,
+            scoreToLevel2: 30,
+            scoreToLevel3: 70,
+            cardSpawnRate: {
+                1: 1500,
+                2: 1000,
+                3: 700
+            },
+            cardFallDuration: {
+                1: '8s',
+                2: '5s',
+                3: '3s'
+            },
+            starChance: 0.1,
+            starSpawnRate: 7000,
+            cardSizes: {
+                min: 40,
+                max: 70
+            },
+            cardColors: [
+                '#ff3e3e', // red
+                '#3eff3e', // green
+                '#3e3eff', // blue
+                '#ff3eff', // pink
+                '#ffff3e', // yellow
+                '#ff9d3e', // orange
+                '#9d3eff'  // purple
+            ],
+            cardShapes: ['square', 'circle', 'diamond', 'triangle']
+        };
+        
+        // Game state
+        const gameState = {
+            lives: config.initialLives,
+            score: 0,
+            level: 1,
+            gameRunning: false,
+            gamePaused: false,
+            cardInterval: null,
+            starInterval: null,
+            activeCards: new Set()
+        };
+        
+        // DOM elements
+        const introScreen = document.getElementById('intro-screen');
+        const gameArea = document.getElementById('game-area');
+        const startBtn = document.getElementById('start-btn');
+        const pauseBtn = document.getElementById('pause-btn');
+        const continueBtn = document.getElementById('continue-btn');
+        const livesDisplay = document.getElementById('lives-display');
+        const scoreDisplay = document.getElementById('score-display');
+        const levelDisplay = document.getElementById('level-display');
+        const levelProgress = document.getElementById('level-progress');
+        const messageOverlay = document.getElementById('message-overlay');
+        const messageTitle = document.getElementById('message-title');
+        const messageContent = document.getElementById('message-content');
+        const hearts = document.querySelectorAll('.heart');
+        
+        // Audio elements
+        const backgroundMusic = document.getElementById('background-music');
+        const cardClickSound = document.getElementById('card-click');
+        const levelUpSound = document.getElementById('level-up');
+        const starSound = document.getElementById('star-sound');
+        const gameOverSound = document.getElementById('game-over');
+        
+        // Event listeners
+        startBtn.addEventListener('click', startGame);
+        pauseBtn.addEventListener('click', togglePause);
+        continueBtn.addEventListener('click', closeMessage);
+        
+        // Adjust volume
+        backgroundMusic.volume = 0.3;
+        cardClickSound.volume = 0.4;
+        levelUpSound.volume = 0.5;
+        starSound.volume = 0.6;
+        gameOverSound.volume = 0.5;
+        
+        // Start the game
+        function startGame() {
+            introScreen.style.display = 'none';
+            gameArea.style.display = 'block';
+            gameState.gameRunning = true;
+            gameState.gamePaused = false;
+            
+            // Reset game state if restarting
+            resetGameState();
+            
+            // Play background music
+            backgroundMusic.play();
+            
+            // Start spawning cards
+            gameState.cardInterval = setInterval(spawnCard, config.cardSpawnRate[gameState.level]);
+            
+            // Start spawning stars
+            gameState.starInterval = setInterval(spawnStar, config.starSpawnRate);
+            
+            // Update UI
+            updateUI();
         }
-
-        function checkLives() {
-            let bottomPos = bottom.getBoundingClientRect().top;
-            let cards = document.querySelectorAll('.falling-card');
-            let starCreated = false; 
-            cards.forEach(card => {
-                let cardPos = card.getBoundingClientRect().bottom;
-                if (cardPos >= bottomPos) {
-                    card.remove();
-                    cardSound.play();
-                    lives--;
-                    document.getElementById('lives').innerText = `Lives: ${lives}`;
-                    if (lives === 0) {
-                        gameOver();
-                    } else if (lives === 1 && !starCreated) {
-                        createStar();
-                        starCreated = true; 
-                    }
-                }
-            });
+        
+        // Reset game state
+        function resetGameState() {
+            gameState.lives = config.initialLives;
+            gameState.score = 0;
+            gameState.level = 1;
+            
+            // Clear any existing cards
+            const existingCards = document.querySelectorAll('.falling-card, .star');
+            existingCards.forEach(card => card.remove());
+            
+            gameState.activeCards.clear();
+            
+            updateUI();
         }
-
-        function gameOver() {
-            stopgame = true;
-            clearInterval(sttop); 
-            show.style.display = 'block'
-            message.innerHTML = 'Game over'
-            let remainingCards = document.querySelectorAll('.falling-card');
-            remainingCards.forEach(card => {
-                card.style.display = 'none'; 
-            });
-            btn.style.display = 'block'
-        }
-
-        class Card {
-            constructor () {
-                this.element = document.createElement('div');
-                this.element.classList.add('falling-card');
-                this.element.style.width = '50px';
-                this.element.style.height = '50px';
-                this.element.style.borderRadius = '8px';
-                this.element.style.position = 'absolute';
-                this.element.style.cursor = 'pointer';
-                this.element.style.backgroundColor = this.getrandomcolor();
-                this.element.style.right = `${Math.random() * 80}%`;
-                document.body.appendChild(this.element);  
+        
+        // Create and spawn a new card
+        function spawnCard() {
+            if (gameState.gamePaused || !gameState.gameRunning) return;
+            
+            const card = document.createElement('div');
+            card.classList.add('falling-card');
+            
+            // Random properties
+            const size = Math.floor(Math.random() * (config.cardSizes.max - config.cardSizes.min + 1)) + config.cardSizes.min;
+            const color = config.cardColors[Math.floor(Math.random() * config.cardColors.length)];
+            const shape = config.cardShapes[Math.floor(Math.random() * config.cardShapes.length)];
+            
+            // Set card styles
+            card.style.width = `${size}px`;
+            card.style.height = `${size}px`;
+            card.style.backgroundColor = color;
+            
+            // Position the card randomly along the top
+            const sidebarWidth = document.querySelector('.sidebar').offsetWidth;
+            const maxX = window.innerWidth - sidebarWidth - size;
+            card.style.left = `${sidebarWidth + Math.random() * maxX}px`;
+            card.style.top = '-100px';
+            
+            // Apply different shapes
+            if (shape === 'circle') {
+                card.style.borderRadius = '50%';
+            } else if (shape === 'diamond') {
+                card.style.transform = 'rotate(45deg)';
+            } else if (shape === 'triangle') {
+                card.style.width = '0';
+                card.style.height = '0';
+                card.style.backgroundColor = 'transparent';
+                card.style.borderLeft = `${size/2}px solid transparent`;
+                card.style.borderRight = `${size/2}px solid transparent`;
+                card.style.borderBottom = `${size}px solid ${color}`;
             }
             
-            getrandomcolor() {
-                let colors = ['red', 'green', 'blue', 'pink', 'yellow', 'orange', 'purple'];
-                let index = Math.floor(Math.random() * colors.length);
-                return colors[index];
-            }
-
-        }
-
-        function checkScoreLevel() {
-            if (score === 50) {
-                show.style.display = 'block';
-                message.innerHTML = 'Level 2';
-                level.innerText = `Level: 2`;
-                stopgame = true;
-                clearInterval(sttop);
-                let remainingCards = document.querySelectorAll('.falling-card');
-                remainingCards.forEach(card => {
-                    card.style.display = 'none'; 
-                });
+            // Set animation duration based on level
+            card.style.animation = `fall ${config.cardFallDuration[gameState.level]} linear forwards`;
+            
+            // Add click event
+            card.addEventListener('click', function() {
+                if (gameState.gamePaused) return;
+                
+                // Play sound
+                cardClickSound.currentTime = 0;
+                cardClickSound.play();
+                
+                // Add score
+                gameState.score++;
+                updateUI();
+                
+                // Visual feedback
+                this.classList.add('clicked');
+                
+                // Remove card after animation
                 setTimeout(() => {
-                    show.style.display = 'none';
-                    level.innerText = `Level: 2`; 
-                    stopgame = false; 
-                    start();
-                    backgroundSound.play();
-                }, 1000);
-            }
-
-            if (score === 100) {
-                show.style.display = 'block';
-                message.innerHTML = 'Level 3';
-                level.innerText = `Level: 3`;
-                stopgame = true;
-                clearInterval(sttop);
-                let remainingCards = document.querySelectorAll('.falling-card');
-                remainingCards.forEach(card => {
-                    card.style.display = 'none'; 
-                });
-                setTimeout(() => {
-                    show.style.display = 'none';
-                    level.innerText = `Level: 3`; 
-                    stopgame = false; 
-                    start();
-                    backgroundSound.play();
-                }, 1000);
-            }
-    }
-
-        function createStar() {
-            let star = document.createElement('img');
-            star.src = "./start2.png"; 
-            star.style.position = 'absolute';
-            star.style.width = '50px'; 
-            star.style.height = '50px'; 
-            star.classList.add('star-falling');
-            star.style.right = `${Math.random() * 80}%`;
-            star.style.pointerEvents = 'auto'; 
-            document.body.appendChild(star);
-
-            star.addEventListener('click', function() {
-                lives = 3;
-                document.getElementById('lives').innerText = `Lives: ${lives}`;
-                this.remove();
-
-                 let remainingCards = document.querySelectorAll('.falling-card');
-                    remainingCards.forEach(card => {
-                        card.style.display = 'none'; 
-                    });
-
-                let starSound = new Audio("./game-bonus-144751.mp3"); 
-                starSound.play();
+                    this.remove();
+                    gameState.activeCards.delete(this);
+                }, 100);
+                
+                // Check for level progression
+                checkLevelProgress();
             });
-
+            
+            // Add to game area
+            gameArea.appendChild(card);
+            gameState.activeCards.add(card);
+            
+            // Check if card reaches bottom
+            const animationDuration = parseFloat(config.cardFallDuration[gameState.level]);
+            setTimeout(() => {
+                if (document.body.contains(card) && !card.classList.contains('clicked')) {
+                    // Card reached bottom
+                    card.remove();
+                    gameState.activeCards.delete(card);
+                    decreaseLives();
+                }
+            }, animationDuration * 1000);
         }
-
-        function startagain() {
-            window.location.reload()
+        
+        // Spawn a star (extra life)
+        function spawnStar() {
+            if (gameState.gamePaused || !gameState.gameRunning || Math.random() > config.starChance) return;
+            
+            const star = document.createElement('img');
+            star.classList.add('star');
+            star.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1NzYgNTEyIj48cGF0aCBmaWxsPSIjZmZkNzAwIiBkPSJNMzE2LjkgMTguOEwzMDQuOCA2NWMtMS45IDYuOC00LjQgMTMuNC03LjIgMTkuNkwyNzUuOCAxMjFjLTYuNCAxNC4xLTE1LjQgMjYuOC0yNi45IDM3LjNjLTkuMiA4LjQtMTkuOCAxNS4yLTMxLjIgMjBMXzE3OCAyMDAuNmMtNyAzLTEzLjcgNi40LTE5LjkgMTAuOGwtMzkuOCAyOC4zYy0xMi4xIDguNi0yMiAxOS45LTI4LjkgMzMuMkw3MiAzMTYuNyA1My40Mzg0XzM2MS41YzEuMjkzXzMuNS0xLjQxN186LjYtMi4yNDJfMTBsMTQuOTkxXzY1LjFDNjguMjc0IDQ0NCw3NS44MzQgNDUxLjIsODYuNjYgNDUxLjNsNjYuODU1XzEuNGMxMy44NzYgLjQgMjcuNzkyLTQuNzIgMzguNzI2LTE1LjVsNDYuNDU3LTQ0LjJjMS45NjgtMS44IDQuMjEzLTMuMyA2Ljg2Ny00LjVsMjYuMDYtOC44YzguMzI3LTIuOCAxNi40MTQtNy4zIDIzLjc0Mi0xMy4yaTM3LjA1N2MxMi4zMTMtMTAuMyAyMi43NTgtMjMgMzAuNTQtMzcuN2w2LjIyOS0xMS43YzUuMzk1LTEwLjEgOS40MTQtMjEuMSAxMS45NDEtMzIuNkw0MDEuOTM0IDE5NmMxLjI4OS01LjcgMy40MDQtMTEuMSA2LjI1OC0xNi4ybDIxLjc0Ni0zOC42YzQuMzY5LTcuOCA2Ljg1MS0xNi41IDcuMjY2LTI1LjUyOTNfLTE1LjkgLjE0OS0zMS44IC4wNDcyLTQ3LjdMMzg3LjY3NiA1MC42YTcyLjA1NiA3Mi4wNTYgMCAwIDAtMS44MDctMTEuMzQ2MkwzNzkuMzggMTAuNzk2MkMzNzYuODU1IDIuMjYwNiAzNjkuMTQgLTIuMDIxNiAzNjAuNzQ2IC45NTY2TDMzOC4xNzggOGMtNyAyLjEtMTQuMyAyLjc1Ny0yMS4yOThlLjI0OTk5eiIvPjwvc3ZnPg==';
+            
+            // Position the star randomly
+            const sidebarWidth = document.querySelector('.sidebar').offsetWidth;
+            const maxX = window.innerWidth - sidebarWidth - 60;
+            star.style.left = `${sidebarWidth + Math.random() * maxX}px`;
+            star.style.top = '-60px';
+            
+            // Animation
+            star.style.animation = `fall ${config.cardFallDuration[gameState.level]} linear forwards`;
+            
+            // Add click event
+            star.addEventListener('click', function() {
+                if (gameState.gamePaused) return;
+                
+                // Play sound
+                starSound.currentTime = 0;
+                starSound.play();
+                
+                // Add life
+                if (gameState.lives < 5) {
+                    gameState.lives++;
+                    updateUI();
+                }
+                
+                // Remove star
+                this.remove();
+            });
+            
+            // Add to game area
+            gameArea.appendChild(star);
+            
+            // Check if star reaches bottom
+            const animationDuration = parseFloat(config.cardFallDuration[gameState.level]);
+            setTimeout(() => {
+                if (document.body.contains(star)) {
+                    star.remove();
+                }
+            }, animationDuration * 1000);
         }
+        
+        // Decrease lives
+        function decreaseLives() {
+            gameState.lives--;
+            updateUI();
+            
+            if (gameState.lives <= 0) {
+                gameOver();
+            }
+        }
+        
+        // Check level progress
+        function checkLevelProgress() {
+            const nextLevelScore = gameState.level === 1 ? config.scoreToLevel2 : config.scoreToLevel3;
+            
+            // Update progress bar
+            const prevLevelScore = gameState.level === 1 ? 0 : config.scoreToLevel2;
+            const progressPercentage = ((gameState.score - prevLevelScore) / (nextLevelScore - prevLevelScore)) * 100;
+            levelProgress.style.width = `${Math.min(progressPercentage, 100)}%`;
+            
+            // Check for level up
+            if (gameState.level === 1 && gameState.score >= config.scoreToLevel2) {
+                levelUp(2);
+            } else if (gameState.level === 2 && gameState.score >= config.scoreToLevel3) {
+                levelUp(3);
+            }
+        }
+        
+        // Level up
+        function levelUp(newLevel) {
+            gameState.level = newLevel;
+            
+            // Pause game
+            pauseGame();
+            
+            // Play level up sound
+            levelUpSound.play();
+            
+            // Show level up message
+            showMessage(
+                `Level ${newLevel}!`, 
+                `You've reached level ${newLevel}! Cards will fall faster now. Get ready!`,
+                'continue'
+            );
+            
+            // Reset progress bar for new level
+            levelProgress.style.width = '0%';
+        }
+        
+        // Game over
+        function gameOver() {
+            gameState.gameRunning = false;
+            
+            // Stop intervals
+            clearInterval(gameState.cardInterval);
+            clearInterval(gameState.starInterval);
+            
+            // Play game over sound
+            backgroundMusic.pause();
+            gameOverSound.play();
+            
+            // Show game over message
+            showMessage(
+                'Game Over!', 
+                `Your final score: ${gameState.score}<br>Click below to play again.`,
+                'restart'
+            );
+        }
+        
+        // Show message overlay
+        function showMessage(title, content, buttonType) {
+            messageTitle.textContent = title;
+            messageContent.innerHTML = content;
+            
+            if (buttonType === 'restart') {
+                continueBtn.textContent = 'Play Again';
+                continueBtn.onclick = function() {
+                    closeMessage();
+                    startGame();
+                };
+            } else {
+                continueBtn.textContent = 'Continue';
+                continueBtn.onclick = function() {
+                    closeMessage();
+                    resumeGame();
+                };
+            }
+            
+            messageOverlay.style.display = 'flex';
+        }
+        
+        // Close message overlay
+        function closeMessage() {
+            messageOverlay.style.display = 'none';
+        }
+        
+        // Pause game
+        function pauseGame() {
+            if (!gameState.gameRunning) return;
+            
+            gameState.gamePaused = true;
+            
+            // Pause background music
+            backgroundMusic.pause();
+            
+            // Pause all animations
+            document.querySelectorAll('.falling-card, .star').forEach(element => {
+                element.style.animationPlayState = 'paused';
+            });
+            
+            pauseBtn.textContent = '▶️';
+        }
+        
+        // Resume game
+        function resumeGame() {
+            if (!gameState.gameRunning) return;
+            
+            gameState.gamePaused = false;
+            
+            // Resume background music
+            backgroundMusic.play();
+            
+            // Resume all animations
+            document.querySelectorAll('.falling-card, .star').forEach(element => {
+                element.style.animationPlayState = 'running';
+            });
+            
+            // Update card interval based on current level
+            clearInterval(gameState.cardInterval);
+            gameState.cardInterval = setInterval(spawnCard, config.cardSpawnRate[gameState.level]);
+            
+            pauseBtn.textContent = '⏸️';
+        }
+        
+        // Toggle pause state
+        function togglePause() {
+            if (gameState.gamePaused) {
+                resumeGame();
+            } else {
+                pauseGame();
+            }
+        }
+        
+        // Update UI
+        function updateUI() {
+            // Update displays
+            livesDisplay.textContent = gameState.lives;
+            scoreDisplay.textContent = gameState.score;
+            levelDisplay.textContent = gameState.level;
+            
+            // Update hearts
+            hearts.forEach((heart, index) => {
+                heart.style.opacity = index < gameState.lives ? '1' : '0.3';
+            });
+            
+            // Update progress bar
+            const prevLevelScore = gameState.level === 1 ? 0 : config.scoreToLevel2;
+            const nextLevelScore = gameState.level === 1 ? config.scoreToLevel2 : config.scoreToLevel3;
+            const progressPercentage = ((gameState.score - prevLevelScore) / (nextLevelScore - prevLevelScore)) * 100;
+            levelProgress.style.width = `${Math.min(progressPercentage, 100)}%`;
+        }
+        
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            // Adjust card positions if needed
+            if (gameState.gamePaused) {
+                const sidebarWidth = document.querySelector('.sidebar').offsetWidth;
+                const maxX = window.innerWidth - sidebarWidth - 70;
+                
+                document.querySelectorAll('.falling-card, .star').forEach(element => {
+                    const currentLeft = parseInt(element.style.left);
+                    if (currentLeft > maxX) {
+                        element.style.left = `${maxX}px`;
+                    }
+                });
+            }
+        });
+        
+        // Handle visibility change to pause/resume
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden && gameState.gameRunning && !gameState.gamePaused) {
+                pauseGame();
+            }
+        });
     </script>
+</body>
 </html>
