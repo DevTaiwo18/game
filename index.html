@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -13,10 +14,11 @@
         body {
             background-color: #0f0f1a;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            overflow: hidden;
             color: #fff;
             position: relative;
             min-height: 100vh;
+            /* Removed overflow: hidden to allow scrolling */
+            touch-action: auto; /* Explicitly allow touch actions */
         }
         
         .container {
@@ -24,7 +26,8 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 100vh;
+            min-height: 100vh;
+            padding: 20px 0; /* Add padding to allow scrolling space */
         }
         
         #game-area {
@@ -42,6 +45,9 @@
             max-width: 800px;
             margin: 0 auto;
             box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+            /* Allow intro screen to be scrollable on small screens */
+            max-height: 90vh;
+            overflow-y: auto;
         }
         
         h1 {
@@ -112,6 +118,8 @@
             flex-direction: column;
             align-items: center;
             z-index: 100;
+            /* Allow overflow scrolling for small screens */
+            overflow-y: auto;
         }
         
         .stats {
@@ -261,6 +269,8 @@
             align-items: center;
             z-index: 1000;
             display: none;
+            /* Allow overlay content to be scrollable */
+            overflow-y: auto;
         }
         
         .message-box {
@@ -272,6 +282,8 @@
             border: 2px solid #ff3e3e;
             box-shadow: 0 0 30px rgba(255, 0, 0, 0.5);
             animation: appear 0.5s forwards;
+            /* Adjust margins for better scrolling */
+            margin: 20px;
         }
         
         @keyframes appear {
@@ -327,7 +339,7 @@
             font-size: 1.2rem;
         }
         
-        /* Responsive styles */
+        /* Responsive styles improved for mobile */
         @media (max-width: 1200px) {
             ul li {
                 font-size: 1.1rem;
@@ -423,6 +435,11 @@
             
             .message-content {
                 font-size: 1rem;
+            }
+            
+            /* Improve mobile touch controls */
+            .falling-card, .star {
+                touch-action: auto;
             }
         }
     </style>
@@ -538,7 +555,8 @@
                 '#ff9d3e', // orange
                 '#9d3eff'  // purple
             ],
-            cardShapes: ['square', 'circle', 'diamond', 'triangle']
+            cardShapes: ['square', 'circle', 'diamond', 'triangle'],
+            mobileMode: window.innerWidth < 768 // Add mobile detection
         };
         
         // Game state
@@ -550,7 +568,8 @@
             gamePaused: false,
             cardInterval: null,
             starInterval: null,
-            activeCards: new Set()
+            activeCards: new Set(),
+            isMobile: config.mobileMode // Store mobile state
         };
         
         // DOM elements
@@ -580,12 +599,26 @@
         pauseBtn.addEventListener('click', togglePause);
         continueBtn.addEventListener('click', closeMessage);
         
+        // Add touch event handling for mobile
+        document.addEventListener('touchstart', handleTouchStart, {passive: true});
+        
         // Adjust volume
         backgroundMusic.volume = 0.3;
         cardClickSound.volume = 0.4;
         levelUpSound.volume = 0.5;
         starSound.volume = 0.6;
         gameOverSound.volume = 0.5;
+        
+        // Mobile touch handler to prevent scrolling during gameplay
+        function handleTouchStart(e) {
+            if (gameState.gameRunning && !gameState.gamePaused) {
+                // Only prevent default for game elements, not for UI controls
+                if (e.target.classList.contains('falling-card') || 
+                    e.target.classList.contains('star')) {
+                    e.preventDefault();
+                }
+            }
+        }
         
         // Start the game
         function startGame() {
@@ -598,7 +631,13 @@
             resetGameState();
             
             // Play background music
-            backgroundMusic.play();
+            try {
+                backgroundMusic.play().catch(err => {
+                    console.log('Audio autoplay blocked by browser', err);
+                });
+            } catch (err) {
+                console.log('Audio error', err);
+            }
             
             // Start spawning cards
             gameState.cardInterval = setInterval(spawnCard, config.cardSpawnRate[gameState.level]);
@@ -665,13 +704,22 @@
             // Set animation duration based on level
             card.style.animation = `fall ${config.cardFallDuration[gameState.level]} linear forwards`;
             
-            // Add click event
-            card.addEventListener('click', function() {
+            // Add click/touch event
+            const clickHandler = function(e) {
                 if (gameState.gamePaused) return;
                 
+                // Prevent default for touch events
+                if (e.type === 'touchstart') {
+                    e.preventDefault();
+                }
+                
                 // Play sound
-                cardClickSound.currentTime = 0;
-                cardClickSound.play();
+                try {
+                    cardClickSound.currentTime = 0;
+                    cardClickSound.play().catch(err => console.log('Sound play error', err));
+                } catch (err) {
+                    console.log('Sound error', err);
+                }
                 
                 // Add score
                 gameState.score++;
@@ -682,13 +730,19 @@
                 
                 // Remove card after animation
                 setTimeout(() => {
-                    this.remove();
-                    gameState.activeCards.delete(this);
+                    if (document.body.contains(this)) {
+                        this.remove();
+                        gameState.activeCards.delete(this);
+                    }
                 }, 100);
                 
                 // Check for level progression
                 checkLevelProgress();
-            });
+            };
+            
+            // Add both click and touch events
+            card.addEventListener('click', clickHandler);
+            card.addEventListener('touchstart', clickHandler, {passive: false});
             
             // Add to game area
             gameArea.appendChild(card);
@@ -712,7 +766,7 @@
             
             const star = document.createElement('img');
             star.classList.add('star');
-            star.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1NzYgNTEyIj48cGF0aCBmaWxsPSIjZmZkNzAwIiBkPSJNMzE2LjkgMTguOEwzMDQuOCA2NWMtMS45IDYuOC00LjQgMTMuNC03LjIgMTkuNkwyNzUuOCAxMjFjLTYuNCAxNC4xLTE1LjQgMjYuOC0yNi45IDM3LjNjLTkuMiA4LjQtMTkuOCAxNS4yLTMxLjIgMjBMXzE3OCAyMDAuNmMtNyAzLTEzLjcgNi40LTE5LjkgMTAuOGwtMzkuOCAyOC4zYy0xMi4xIDguNi0yMiAxOS45LTI4LjkgMzMuMkw3MiAzMTYuNyA1My40Mzg0XzM2MS41YzEuMjkzXzMuNS0xLjQxN186LjYtMi4yNDJfMTBsMTQuOTkxXzY1LjFDNjguMjc0IDQ0NCw3NS44MzQgNDUxLjIsODYuNjYgNDUxLjNsNjYuODU1XzEuNGMxMy44NzYgLjQgMjcuNzkyLTQuNzIgMzguNzI2LTE1LjVsNDYuNDU3LTQ0LjJjMS45NjgtMS44IDQuMjEzLTMuMyA2Ljg2Ny00LjVsMjYuMDYtOC44YzguMzI3LTIuOCAxNi40MTQtNy4zIDIzLjc0Mi0xMy4yaTM3LjA1N2MxMi4zMTMtMTAuMyAyMi43NTgtMjMgMzAuNTQtMzcuN2w2LjIyOS0xMS43YzUuMzk1LTEwLjEgOS40MTQtMjEuMSAxMS45NDEtMzIuNkw0MDEuOTM0IDE5NmMxLjI4OS01LjcgMy40MDQtMTEuMSA2LjI1OC0xNi4ybDIxLjc0Ni0zOC42YzQuMzY5LTcuOCA2Ljg1MS0xNi41IDcuMjY2LTI1LjUyOTNfLTE1LjkgLjE0OS0zMS44IC4wNDcyLTQ3LjdMMzg3LjY3NiA1MC42YTcyLjA1NiA3Mi4wNTYgMCAwIDAtMS44MDctMTEuMzQ2MkwzNzkuMzggMTAuNzk2MkMzNzYuODU1IDIuMjYwNiAzNjkuMTQgLTIuMDIxNiAzNjAuNzQ2IC45NTY2TDMzOC4xNzggOGMtNyAyLjEtMTQuMyAyLjc1Ny0yMS4yOThlLjI0OTk5eiIvPjwvc3ZnPg==';
+            star.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1NzYgNTEyIj48cGF0aCBmaWxsPSIjZmZkNzAwIiBkPSJNMzE2LjkgMTguOEwzMDQuOCA2NWMtMS45IDYuOC00LjQgMTMuNC03LjIgMTkuNkwyNzUuOCAxMjFjLTYuNCAxNC4xLTE1LjQgMjYuOC0yNi45IDM3LjNjLTkuMiA4LjQtMTkuOCAxNS4yLTMxLjIgMjBMXzE3OCAyMDAuNmMtNyAzLTEzLjcgNi40LTE5LjkgMTAuOGwtMzkuOCAyOC4zYy0xMi4xIDguNi0yMiAxOS45LTI4LjkgMzMuMkw3MiAzMTYuNyA1My40Mzg0XzM2MS41YzEuMjkzXzMuNS0xLjQxN182LjYtMi4yNDJfMTBsMTQuOTkxXzY1LjFDNjguMjc0IDQ0NCw3NS44MzQgNDUxLjIsODYuNjYgNDUxLjNsNjYuODU1XzEuNGMxMy44NzYgLjQgMjcuNzkyLTQuNzIgMzguNzI2LTE1LjVsNDYuNDU3LTQ0LjJjMS45NjgtMS44IDQuMjEzLTMuMyA2Ljg2Ny00LjVsMjYuMDYtOC44YzguMzI3LTIuOCAxNi40MTQtNy4zIDIzLjc0Mi0xMy4yaDM3LjA1N2MxMi4zMTMtMTAuMyAyMi43NTgtMjMgMzAuNTQtMzcuN2w2LjIyOS0xMS43YzUuMzk1LTEwLjEgOS40MTQtMjEuMSAxMS45NDEtMzIuNkw0MDEuOTM0IDE5NmMxLjI4OS01LjcgMy40MDQtMTEuMSA2LjI1OC0xNi4ybDIxLjc0Ni0zOC42YzQuMzY5LTcuOCA2Ljg1MS0xNi41IDcuMjY2LTI1LjUyOTNfLTE1LjkgLjE0OS0zMS44IC4wNDcyLTQ3LjdMMzg3LjY3NiA1MC42YTcyLjA1NiA3Mi4wNTYgMCAwIDAtMS44MDctMTEuMzQ2MkwzNzkuMzggMTAuNzk2MkMzNzYuODU1IDIuMjYwNiAzNjkuMTQgLTIuMDIxNiAzNjAuNzQ2IC45NTY2TDMzOC4xNzggOGMtNyAyLjEtMTQuMyAyLjc1Ny0yMS4yOThlLjI0OTk5eiIvPjwvc3ZnPg==';
             
             // Position the star randomly
             const sidebarWidth = document.querySelector('.sidebar').offsetWidth;
@@ -723,13 +777,22 @@
             // Animation
             star.style.animation = `fall ${config.cardFallDuration[gameState.level]} linear forwards`;
             
-            // Add click event
-            star.addEventListener('click', function() {
+            // Add click event with touch support
+            const clickHandler = function(e) {
                 if (gameState.gamePaused) return;
                 
+                // Prevent default for touch events
+                if (e.type === 'touchstart') {
+                    e.preventDefault();
+                }
+                
                 // Play sound
-                starSound.currentTime = 0;
-                starSound.play();
+                try {
+                    starSound.currentTime = 0;
+                    starSound.play().catch(err => console.log('Sound play error', err));
+                } catch (err) {
+                    console.log('Sound error', err);
+                }
                 
                 // Add life
                 if (gameState.lives < 5) {
@@ -739,7 +802,11 @@
                 
                 // Remove star
                 this.remove();
-            });
+            };
+            
+            // Add both click and touch events
+            star.addEventListener('click', clickHandler);
+            star.addEventListener('touchstart', clickHandler, {passive: false});
             
             // Add to game area
             gameArea.appendChild(star);
@@ -788,7 +855,11 @@
             pauseGame();
             
             // Play level up sound
-            levelUpSound.play();
+            try {
+                levelUpSound.play().catch(err => console.log('Sound play error', err));
+            } catch (err) {
+                console.log('Sound error', err);
+            }
             
             // Show level up message
             showMessage(
@@ -811,7 +882,11 @@
             
             // Play game over sound
             backgroundMusic.pause();
-            gameOverSound.play();
+            try {
+                gameOverSound.play().catch(err => console.log('Sound play error', err));
+            } catch (err) {
+                console.log('Sound error', err);
+            }
             
             // Show game over message
             showMessage(
@@ -841,6 +916,11 @@
             }
             
             messageOverlay.style.display = 'flex';
+            
+            // Enable scrolling on the overlay for mobile
+            if (gameState.isMobile) {
+                document.body.style.overflow = 'auto';
+            }
         }
         
         // Close message overlay
@@ -863,6 +943,9 @@
             });
             
             pauseBtn.textContent = '▶️';
+            
+            // Enable scrolling when paused
+            document.body.style.overflow = 'auto';
         }
         
         // Resume game
@@ -872,7 +955,11 @@
             gameState.gamePaused = false;
             
             // Resume background music
-            backgroundMusic.play();
+            try {
+                backgroundMusic.play().catch(err => console.log('Sound play error', err));
+            } catch (err) {
+                console.log('Sound error', err);
+            }
             
             // Resume all animations
             document.querySelectorAll('.falling-card, .star').forEach(element => {
@@ -916,6 +1003,9 @@
         
         // Handle window resize
         window.addEventListener('resize', function() {
+            // Update mobile mode detection
+            gameState.isMobile = window.innerWidth < 768;
+            
             // Adjust card positions if needed
             if (gameState.gamePaused) {
                 const sidebarWidth = document.querySelector('.sidebar').offsetWidth;
